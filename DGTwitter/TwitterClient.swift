@@ -89,6 +89,43 @@ class TwitterClient: BDBOAuth1SessionManager {
     }
     
     
+    func mentionTimeline(success: @escaping ([Tweet]) -> (), failure: @escaping (Error) -> ()) {
+        
+        get("1.1/statuses/mentions_timeline.json", parameters: nil, success: { (task, response) -> Void in
+            // code here
+            let dictionaries = response as! [NSDictionary]
+            let tweets = Tweet.tweetsWithArray(dictionaries: dictionaries)
+            
+            success(tweets)
+            
+        }, failure: { (task, error) -> Void in
+            failure(error)
+            print("here-------------")
+            print("error: \(error)")
+        })
+        
+    }
+    
+    
+    func userTimeline(userId: String, success: @escaping ([Tweet]) -> (), failure: @escaping (Error) -> ()) {
+        
+
+        get("1.1/statuses/user_timeline.json?user_id=\(userId)", parameters: nil, success: { (task, response) -> Void in
+            // code here
+            let dictionaries = response as! [NSDictionary]
+            let tweets = Tweet.tweetsWithArray(dictionaries: dictionaries)
+            
+            success(tweets)
+            
+        }, failure: { (task, error) -> Void in
+            failure(error)
+            print("here-------------")
+            print("error: \(error)")
+        })
+        
+    }
+    
+    
     func currentAccount(success: @escaping (User) -> (), failure: @escaping (Error)->()) {
         get("1.1/account/verify_credentials.json", parameters: nil, success: { (task, response) -> Void in
             // code here
@@ -102,6 +139,26 @@ class TwitterClient: BDBOAuth1SessionManager {
         })
         
     }
+    
+    func userAccount(userId: String, success: @escaping (User) -> (), failure: @escaping (Error)->()) {
+        get("1.1/users/lookup.json?user_id=\(userId)", parameters: nil, success: { (task, response) -> Void in
+            // code here
+            
+//            print(response)
+            let responseArray = response as! Array<Any>
+            print(responseArray.count)
+            let userDictionary = responseArray[0] as! NSDictionary
+            
+            let user = User(dictionary: userDictionary)
+            success(user)
+            
+        }, failure: { (task, error) -> Void in
+            failure(error)
+        })
+        
+    }
+
+    
     
     func sendTweet(message: String, reply_id:String?, success:@escaping (Any?) -> (), failure:@escaping (Error) -> ()) {
         let url = "1.1/statuses/update.json?"

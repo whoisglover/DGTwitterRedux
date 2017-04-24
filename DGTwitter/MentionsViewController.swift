@@ -1,5 +1,5 @@
 //
-//  TweetsViewController.swift
+//  MentionsViewController.swift
 //  DGTwitter
 //
 //  Created by Danny Glover on 4/13/17.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class TweetsViewController: UIViewController {
+class MentionsViewController: UIViewController {
     
     var tweets: [Tweet]!
     let refreshControl = UIRefreshControl.init()
@@ -19,7 +19,7 @@ class TweetsViewController: UIViewController {
         super.viewDidLoad()
         tweetsTableView.delegate = self
         tweetsTableView.dataSource = self
-       
+        
         
         let icon = UIImage(named: "birdBlue")
         let birdImageView = UIImageView(image: icon)
@@ -37,11 +37,11 @@ class TweetsViewController: UIViewController {
         refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
         refreshControl.addTarget(self, action: #selector(TweetsViewController.grabTweets), for: UIControlEvents.valueChanged)
         tweetsTableView.addSubview(refreshControl)
-
+        
         
         grabTweets()
         
-    
+        
         tweetsTableView.rowHeight = UITableViewAutomaticDimension
         tweetsTableView.estimatedRowHeight = 250
         
@@ -65,20 +65,20 @@ class TweetsViewController: UIViewController {
     
     func grabTweets () {
         tweets = []
-        TwitterClient.sharedInstance?.homeTimeline(success: { (tweets: [Tweet]) -> () in
+        TwitterClient.sharedInstance?.mentionTimeline(success: { (tweets: [Tweet]) -> () in
             self.tweets = tweets
             self.tweetsTableView.reloadData()
             self.refreshControl.endRefreshing()
-
+            
             
         }, failure: { (error: Error) -> () in
             //
         })
-    
+        
     }
 }
 
-extension TweetsViewController: UITableViewDelegate, UITableViewDataSource {
+extension MentionsViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if tweets != nil {
@@ -111,5 +111,5 @@ extension TweetsViewController: UITableViewDelegate, UITableViewDataSource {
         navigationController?.pushViewController(vc, animated: true)
         
     }
-
+    
 }

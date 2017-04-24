@@ -20,11 +20,18 @@ class Tweet: NSObject {
     var screenName: String?
     var isVerified: Bool?
     var timeStampString: String?
+    var authorId: String?
     
     init(dictionary: NSDictionary) {
         
         
+        
+        
         let user = dictionary["user"] as! NSDictionary
+        
+        
+        authorId = user["id_str"] as? String
+        print("id: \(authorId!)")
         let name = user["name"] as? String
         
 //        print("user object is: \(user)")
@@ -65,12 +72,12 @@ class Tweet: NSObject {
         
         
         let dateComponentsFormatter = DateComponentsFormatter()
-        dateComponentsFormatter.allowedUnits = [.second, .minute, .hour]
+        dateComponentsFormatter.allowedUnits = [.second, .minute, .hour, .day, .month]
         dateComponentsFormatter.maximumUnitCount = 1
         dateComponentsFormatter.unitsStyle = .full
         let timeDiff = dateComponentsFormatter.string(from: timeStamp!, to: Date())  // "1 month"
         timeStampString = timeDiff
-//        print("time stamp is: \(timeStamp)")
+
     }
     
     class func tweetsWithArray(dictionaries: [NSDictionary]) -> [Tweet] {

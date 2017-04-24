@@ -17,13 +17,11 @@ class TweetCell: UITableViewCell {
     @IBOutlet weak var timestampLabel: UILabel!
     @IBOutlet weak var tweetTextLabel: UILabel!
     @IBOutlet weak var handleLabel: UILabel!
-    
     @IBOutlet weak var repliesLabel: UILabel!
-    
     @IBOutlet weak var retweetsLabel: UILabel!
-    
     @IBOutlet weak var favoritesLabel: UILabel!
     
+    var navController: UINavigationController?
     
     var tweet: Tweet? {
         didSet {
@@ -53,10 +51,37 @@ class TweetCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapProfileImage))
+        profileImageView.isUserInteractionEnabled = true
+        profileImageView.addGestureRecognizer(tapGestureRecognizer)
         
         // Initialization code
     }
 
+    
+    func tapProfileImage() {
+        print("tapped!")
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        
+        let vc = storyboard.instantiateViewController(withIdentifier: "ProfileViewController") as! ProfileViewController
+        
+        TwitterClient.sharedInstance?.userAccount(userId: (tweet?.authorId!)! ,success: { (user: User) -> () in
+        
+            vc.user = user
+            print("here about to push vc")
+            self.navController?.pushViewController(vc, animated: true)
+            
+        }, failure: { (error: Error) -> () in
+            print("error grabbing user account:")
+            print(error)
+        })
+
+        
+        
+        
+    
+    }
+    
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
 
